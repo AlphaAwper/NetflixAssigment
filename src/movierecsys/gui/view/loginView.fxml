@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="movierecsys.gui.controller.LoginRecController">
+   <top>
+      <VBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Choose a name to login" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font name="Book Antiqua Bold" size="30.0" />
+               </font>
+            </Label>
+            <Label fx:id="errorLabel" />
+            <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginUser" text="Login" />
+            <HBox prefHeight="0.0" prefWidth="322.0">
+               <children>
+                  <TextField fx:id="userName" prefHeight="26.0" prefWidth="169.0" promptText="Insert your new Username" />
+                  <Button mnemonicParsing="false" onAction="#createUser" text="Create User">
+                     <HBox.margin>
+                        <Insets left="60.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" />
+         </padding>
+         <BorderPane.margin>
+            <Insets left="5.0" right="5.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+         <children>
+            <ListView fx:id="lstUsers" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
