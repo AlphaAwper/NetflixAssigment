@@ -29,7 +29,6 @@ public class Rating {
      * @param rating The value of the rating. Only the constants of the Rating
      * class are allowed values.
      */
-
     public Rating(int movieId, int userId, int rating) {
         this.movieId = movieId;
         this.userId = userId;

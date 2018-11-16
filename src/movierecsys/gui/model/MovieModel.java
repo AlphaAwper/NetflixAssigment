@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import movierecsys.be.Movie;
+import movierecsys.be.Rating;
 import movierecsys.be.User;
 import movierecsys.bll.MRSLogicFacade;
 import movierecsys.bll.MRSManager;
@@ -65,5 +66,9 @@ public class MovieModel {
 
     public List<Movie> getWeighted(User newUser) {
         return logiclayer.getMovieReccomendations(newUser);
+    }
+
+    public Rating getRatingForMovie(User newUser, Movie selectedItem) {
+        return logiclayer.getMovieRecomendation(newUser, selectedItem);
     }
 }

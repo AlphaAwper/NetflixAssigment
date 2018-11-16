@@ -57,6 +57,6 @@ public class generalRating {
 
     @Override
     public String toString() {
-        return "Movie id : "+ movieId + " Rating  : " + rating;
+        return "Movie id : " + movieId + " Rating  : " + rating;
     }
 }

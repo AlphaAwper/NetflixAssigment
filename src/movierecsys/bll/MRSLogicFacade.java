@@ -106,4 +106,6 @@ public interface MRSLogicFacade {
      */
     List<User> getAllUsers();
 
+    Rating getMovieRecomendation(User newUser, Movie selectedItem);
+
 }

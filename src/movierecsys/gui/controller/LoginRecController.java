@@ -36,7 +36,7 @@ public class LoginRecController implements Initializable {
     private ListView<User> lstUsers;
     @FXML
     private TextField userName;
-    
+
     private UserModel userModel;
     @FXML
     private Label errorLabel;
@@ -69,7 +69,7 @@ public class LoginRecController implements Initializable {
             User newUser = userModel.createUser(userName.getText());
             logInUser(newUser);
         } else {
-           errorLabel.setText("Error :  namie field cannot be empty");
+            errorLabel.setText("Error :  namie field cannot be empty");
         }
     }
 

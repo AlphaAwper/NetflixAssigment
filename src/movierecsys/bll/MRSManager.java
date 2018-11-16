@@ -7,8 +7,6 @@ package movierecsys.bll;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import movierecsys.be.Movie;
 import movierecsys.be.Rating;
@@ -54,7 +52,7 @@ public class MRSManager implements MRSLogicFacade {
     @Override
     public List<Movie> getAllTimeTopRatedMovies() {
         try {
-            return movieRecommend.highAverageRecommendations(ratingDAO.getAllRatings(),movieDAO.getAllMovies());
+            return movieRecommend.highAverageRecommendations(ratingDAO.getAllRatings(), movieDAO.getAllMovies());
         } catch (IOException ex) {
             System.out.println("Could not get all time recommended . Reason : " + ex);
             return null;
@@ -64,7 +62,7 @@ public class MRSManager implements MRSLogicFacade {
     @Override
     public List<Movie> getMovieReccomendations(User user) {
         try {
-            return movieRecommend.weightedRecommendations(ratingDAO.getAllRatings(), ratingDAO.getRatings(user),movieDAO.getAllMovies());
+            return movieRecommend.weightedRecommendations(ratingDAO.getAllRatings(), ratingDAO.getRatings(user), movieDAO.getAllMovies());
         } catch (IOException ex) {
             System.out.println("Could not user specific recommendations . Reason : " + ex);
             return null;
@@ -140,6 +138,16 @@ public class MRSManager implements MRSLogicFacade {
             return userData.getAllUsers();
         } catch (IOException ex) {
             System.out.println("Could not get all users . Reason : " + ex);
+            return null;
+        }
+    }
+
+    @Override
+    public Rating getMovieRecomendation(User newUser, Movie selectedItem) {
+        try {
+            return ratingDAO.getSingleRating(newUser, selectedItem);
+        } catch (IOException ex) {
+            System.out.println("Could not get user rating . Reason : " + ex);
             return null;
         }
     }

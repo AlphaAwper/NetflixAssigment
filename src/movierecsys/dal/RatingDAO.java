@@ -8,11 +8,9 @@ package movierecsys.dal;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -56,6 +54,8 @@ public class RatingDAO {
             try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.SYNC, StandardOpenOption.APPEND, StandardOpenOption.WRITE)) {
                 bw.newLine();
                 bw.write(rating.getMovie() + "," + rating.getUser() + "," + rating.getRating());
+                bw.close();
+                updateRating(rating);
             }
         }
     }
@@ -158,7 +158,7 @@ public class RatingDAO {
         List<Rating> allUserRatings = new ArrayList<>();
         List<Rating> allRatings = getAllRatings();
         for (Rating allRating : allRatings) {
-            if(allRating.getUser() == user.getId()){
+            if (allRating.getUser() == user.getId()) {
                 allUserRatings.add(allRating);
             }
         }
@@ -171,6 +171,18 @@ public class RatingDAO {
         int userId = Integer.parseInt(cols[1]);
         int rating = Integer.parseInt(cols[2]);
         return new Rating(movId, userId, rating);
+    }
+
+    public Rating getSingleRating(User newUser, Movie selectedItem) throws IOException {
+        List<Rating> allRatings = getAllRatings();
+        Rating userRating = null;
+        for (Rating allRating : allRatings) {
+            if (allRating.getMovie() == selectedItem.getId() && allRating.getUser() == newUser.getId()) {
+                userRating = allRating;
+                break;
+            }
+        }
+        return userRating;
     }
 
 }

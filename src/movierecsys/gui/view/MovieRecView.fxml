@@ -75,7 +75,7 @@
                         <Insets right="20.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#displayNew" text="New movie recomendations">
+                  <Button fx:id="userRecom" disable="true" mnemonicParsing="false" onAction="#displayNew" text="New movie recomendations">
                      <HBox.margin>
                         <Insets right="20.0" />
                      </HBox.margin>
@@ -100,7 +100,7 @@
       <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <children>
             <TextField fx:id="txtMovieSearcjh" onKeyTyped="#searchMovie" promptText="search movies" />
-            <ListView fx:id="lstMovies" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+            <ListView fx:id="lstMovies" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#changeRatings" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </center>

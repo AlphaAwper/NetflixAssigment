@@ -25,8 +25,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import movierecsys.be.Movie;
+import movierecsys.be.Rating;
 import movierecsys.be.User;
 import movierecsys.bll.exception.MovieRecSysException;
 import movierecsys.gui.model.MovieModel;
@@ -70,9 +72,11 @@ public class MovieRecController implements Initializable {
     private MovieModel movieModel;
     private ObservableList<Movie> newMovies;
     private List<Movie> foundMovieList;
-    private User newUser;
+    private User newUser = null;
     @FXML
     private Label errorLabel;
+    @FXML
+    private Button userRecom;
 
     public MovieRecController() {
         try {
@@ -132,16 +136,19 @@ public class MovieRecController implements Initializable {
         addButton.setDisable(false);
         sumitButton.setDisable(false);
         deleteButton.setDisable(false);
+        userRecom.setDisable(false);
         newUser = selectedUser;
         userID.setVisible(true);
         userID.setText("Your username : " + selectedUser.getName());
     }
 
     @FXML
-    private void addMovieToList(ActionEvent event) {
+    private void addMovieToList(ActionEvent event) throws MovieRecSysException {
         if (movieDate.getText() != null && !movieDate.getText().isEmpty() && movieTitle.getText() != null && !movieTitle.getText().isEmpty()) {
             int newInt = Integer.parseInt(movieDate.getText());
             movieModel.createMovie(newInt, movieTitle.getText());
+            lstMovies.getItems().clear();
+            lstMovies.setItems(movieModel.getMovies());
         } else {
             errorLabel.setText("Error : please check if you entered data to both fields");
         }
@@ -179,9 +186,11 @@ public class MovieRecController implements Initializable {
     }
 
     @FXML
-    private void deleteSelectedMovie(ActionEvent event) {
+    private void deleteSelectedMovie(ActionEvent event) throws MovieRecSysException {
         if (lstMovies.getSelectionModel().getSelectedItem() != null) {
             movieModel.deleteMovie(lstMovies.getSelectionModel().getSelectedItem());
+            lstMovies.getItems().clear();
+            lstMovies.setItems(movieModel.getMovies());
         } else {
             errorLabel.setText("Error : please select a movie to remove");
         }
@@ -202,7 +211,6 @@ public class MovieRecController implements Initializable {
     @FXML
     private void displayNew(ActionEvent event) {
         lstMovies.getItems().clear();
-        lstMovies.getItems().clear();
         newMovies = FXCollections.observableArrayList();
         foundMovieList = new ArrayList<>();
         foundMovieList = movieModel.getWeighted(newUser);
@@ -217,6 +225,45 @@ public class MovieRecController implements Initializable {
     private void displayOld(ActionEvent event) throws MovieRecSysException {
         lstMovies.getItems().clear();
         lstMovies.setItems(movieModel.getMovies());
+    }
+
+    @FXML
+    private void changeRatings(MouseEvent event) {
+        if (newUser != null) {
+            Rating currentRating = movieModel.getRatingForMovie(newUser, lstMovies.getSelectionModel().getSelectedItem());
+            rratingTitle.setText(lstMovies.getSelectionModel().getSelectedItem().getTitle());
+            List<Toggle> togglesList = rating.getToggles();
+            if (currentRating != null) {
+                int x = 0;
+                int currentCheck = -5;
+                for (Toggle toggle : togglesList) {
+                    if (currentRating.getRating() == currentCheck) {
+                        toggle.setSelected(true);
+                    } else {
+                        toggle.setSelected(false);
+                    }
+                    switch (x) {
+                        case 0:
+                            currentCheck = -3;
+                            break;
+                        case 1:
+                            currentCheck = 1;
+                            break;
+                        case 2:
+                            currentCheck = 3;
+                            break;
+                        case 3:
+                            currentCheck = 5;
+                            break;
+                    }
+                    x++;
+                }
+            } else {
+                for (Toggle toggle : togglesList) {
+                    toggle.setSelected(false);
+                }
+            }
+        }
     }
 
 }

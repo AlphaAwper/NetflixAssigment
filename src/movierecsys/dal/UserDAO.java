@@ -123,10 +123,12 @@ public class UserDAO {
 
     private int getNextAvailableUserID() throws IOException {
         List<User> allUsers = getAllUsers();
-        int newhighID = 0 ;
+        int newhighID = 0;
         for (User allUser : allUsers) {
-           if(allUsers.get(newhighID).getId() != newhighID+1) break;
-           newhighID++;    
+            if (allUsers.get(newhighID).getId() != newhighID + 1) {
+                break;
+            }
+            newhighID++;
         }
         return newhighID + 1;
     }
