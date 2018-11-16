@@ -8,14 +8,19 @@ package movierecsys.dal;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import movierecsys.be.Movie;
 import movierecsys.be.Rating;
 import movierecsys.be.User;
 
@@ -63,49 +68,48 @@ public class RatingDAO {
      * @throws java.io.IOException
      */
     public void updateRating(Rating rating) throws IOException {
-        try (RandomAccessFile raf = new RandomAccessFile(RATING_SOURCE, "rw")) {
-            long totalRatings = raf.length();
-            long low = 0;
-            long high = ((totalRatings - 1) / RECORD_SIZE) * RECORD_SIZE;
-            while (high >= low) //Binary search of movie ID
-            {
-                long pos = (((high + low) / 2) / RECORD_SIZE) * RECORD_SIZE;
-                raf.seek(pos);
-                int movId = raf.readInt();
-                int userId = raf.readInt();
-
-                if (rating.getMovie() < movId) //We did not find the movie.
-                {
-                    high = pos - RECORD_SIZE; //We half our problem size to the upper half.
-                } else if (rating.getMovie() > movId) //We did not find the movie.
-                {
-                    low = pos + RECORD_SIZE; //We half our problem size (Just the lower half)
-                } else //We found a movie match, not to search for the user:
-                {
-                    if (rating.getUser() < userId) //Again we half our problem size
-                    {
-                        high = pos - RECORD_SIZE;
-                    } else if (rating.getUser() > userId) //Another half sized problem
-                    {
-                        low = pos + RECORD_SIZE;
-                    } else //Last option, we found the right row:
-                    {
-                        raf.write(rating.getRating()); //Remember the to reads at line 60,61. They positioned the filepointer just at the ratings part of the current record.
-                        return; //We return from the method. We are done here. The try with resources will close the connection to the file.
-                    }
-                }
+        File tmp = new File("data/tmp_ratings.txt");
+        List<Rating> allRatings = getAllRatings();
+        allRatings.removeIf((Rating t) -> t.getMovie() == rating.getMovie());
+        allRatings.add(rating);
+        Collections.sort(allRatings, (Rating o1, Rating o2) -> Integer.compare(o1.getMovie(), o2.getMovie()));
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(tmp))) {
+            for (Rating rat : allRatings) {
+                bw.write(rat.getMovie() + "," + rat.getUser() + "," + rat.getRating());
+                bw.newLine();
             }
         }
-        throw new IllegalArgumentException("Rating not found in file, can't update!"); //If we reach this point we have been searching for a non-present rating.
+        Files.copy(tmp.toPath(), new File(RATING_SOURCE).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.delete(tmp.toPath());
     }
 
     /**
-     * Removes the given rating.
+     * Removes the ratings for the movie
      *
      * @param rating
      */
-    public void deleteRating(Rating rating) {
-        //TODO Delete rating
+    public void deleteRating(int IdToDelete) throws IOException {
+        String currentLine;
+        File inputFile = new File(RATING_SOURCE);
+        File tempFile = new File("data/tempRatings.txt");
+
+        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+        String s1 = Integer.toString(IdToDelete);
+
+        while ((currentLine = reader.readLine()) != null) {
+            if (!(currentLine.split(",")[0]).contains(s1)) {
+                writer.write(currentLine);
+                writer.newLine();
+            }
+        }
+
+        writer.close();
+        reader.close();
+
+        inputFile.delete();
+        tempFile.renameTo(inputFile);
     }
 
     /**
@@ -150,9 +154,15 @@ public class RatingDAO {
      * @param user The user
      * @return The list of ratings.
      */
-    public List<Rating> getRatings(User user) {
-        //TODO Get user ratings.
-        return null;
+    public List<Rating> getRatings(User user) throws IOException {
+        List<Rating> allUserRatings = new ArrayList<>();
+        List<Rating> allRatings = getAllRatings();
+        for (Rating allRating : allRatings) {
+            if(allRating.getUser() == user.getId()){
+                allUserRatings.add(allRating);
+            }
+        }
+        return allUserRatings;
     }
 
     private Rating getRatingFromLine(String line) throws NumberFormatException {

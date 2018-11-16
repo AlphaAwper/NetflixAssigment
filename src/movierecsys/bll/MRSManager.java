@@ -18,6 +18,7 @@ import movierecsys.dal.MovieDAO;
 import movierecsys.bll.util.MovieSearcher;
 import movierecsys.dal.RatingDAO;
 import movierecsys.dal.UserDAO;
+import movierecsys.bll.util.MovieRecommender;
 
 /**
  *
@@ -29,27 +30,45 @@ public class MRSManager implements MRSLogicFacade {
     private final MovieSearcher movieSearch;
     private final UserDAO userData;
     private final RatingDAO ratingDAO;
+    private final MovieRecommender movieRecommend;
 
     public MRSManager() {
         movieDAO = new MovieDAO();
         movieSearch = new MovieSearcher();
         userData = new UserDAO();
         ratingDAO = new RatingDAO();
+        movieRecommend = new MovieRecommender();
     }
+//throws out all recomendations .
 
     @Override
     public List<Rating> getRecommendedMovies(User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return ratingDAO.getRatings(user);
+        } catch (IOException ex) {
+            System.out.println("Could not get users recoomendations . Reason : " + ex);
+            return null;
+        }
     }
 
     @Override
     public List<Movie> getAllTimeTopRatedMovies() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return movieRecommend.highAverageRecommendations(ratingDAO.getAllRatings(),movieDAO.getAllMovies());
+        } catch (IOException ex) {
+            System.out.println("Could not get all time recommended . Reason : " + ex);
+            return null;
+        }
     }
 
     @Override
     public List<Movie> getMovieReccomendations(User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return movieRecommend.weightedRecommendations(ratingDAO.getAllRatings(), ratingDAO.getRatings(user),movieDAO.getAllMovies());
+        } catch (IOException ex) {
+            System.out.println("Could not user specific recommendations . Reason : " + ex);
+            return null;
+        }
     }
 
     @Override
@@ -80,6 +99,7 @@ public class MRSManager implements MRSLogicFacade {
     public void deleteMovie(Movie movie) {
         try {
             movieDAO.deleteMovie(movie);
+            ratingDAO.deleteRating(movie.getId());
         } catch (IOException ex) {
             System.out.println("Could not delete movie . Reason : " + ex);
         }

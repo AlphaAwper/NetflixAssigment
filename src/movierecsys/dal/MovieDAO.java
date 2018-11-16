@@ -94,7 +94,9 @@ public class MovieDAO {
             bw.newLine();
             bw.write(id + "," + releaseYear + "," + title);
         }
-        return new Movie(id, releaseYear, title);
+        Movie sendMovie = new Movie(id, releaseYear, title);
+        updateMovie(sendMovie);
+        return sendMovie;
     }
 
     /**
@@ -105,8 +107,12 @@ public class MovieDAO {
      */
     private int getNextAvailableMovieID() throws IOException {
         List<Movie> allMovies = getAllMovies();
-        int highId = allMovies.get(allMovies.size() - 1).getId();
-        return highId + 1;
+        int newhighID = 0 ;
+        for (Movie allMovie : allMovies) {
+           if(allMovie.getId() != newhighID+1) break;
+           newhighID++;    
+        }
+        return newhighID + 1;
     }
 
     /**

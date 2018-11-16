@@ -116,13 +116,19 @@ public class UserDAO {
             bw.newLine();
             bw.write(id + "," + name);
         }
-        return new User(id, name);
+        User sendUser = new User(id, name);
+        updateUser(sendUser);
+        return sendUser;
     }
 
     private int getNextAvailableUserID() throws IOException {
         List<User> allUsers = getAllUsers();
-        int highId = allUsers.get(allUsers.size() - 1).getId();
-        return highId + 1;
+        int newhighID = 0 ;
+        for (User allUser : allUsers) {
+           if(allUsers.get(newhighID).getId() != newhighID+1) break;
+           newhighID++;    
+        }
+        return newhighID + 1;
     }
 
 }

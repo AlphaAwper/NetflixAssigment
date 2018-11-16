@@ -58,4 +58,12 @@ public class MovieModel {
     public void submitRating(Movie selectedItem, User newUser, int realRating) {
         logiclayer.rateMovie(selectedItem, newUser, realRating);
     }
+
+    public List<Movie> getHigestRecommended() {
+        return logiclayer.getAllTimeTopRatedMovies();
+    }
+
+    public List<Movie> getWeighted(User newUser) {
+        return logiclayer.getMovieReccomendations(newUser);
+    }
 }

@@ -68,6 +68,25 @@
                </children>
             </HBox>
             <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteSelectedMovie" text="Delete selected movie" />
+            <HBox prefHeight="2.0" prefWidth="500.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#displayhighest" text="Show highest rated movies">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#displayNew" text="New movie recomendations">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#displayOld" text="Movies by IDs">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
          <padding>
             <Insets bottom="10.0" />

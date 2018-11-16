@@ -153,7 +153,9 @@ public class MovieRecController implements Initializable {
         int realRating = -1;
         int x = 0;
         for (Toggle toggle : temp) {
-            if (toggle.isSelected()) break;
+            if (toggle.isSelected()) {
+                break;
+            }
             x++;
         }
         switch (x) {
@@ -164,7 +166,7 @@ public class MovieRecController implements Initializable {
                 realRating = -3;
                 break;
             case 2:
-                realRating = 0;
+                realRating = 1;
                 break;
             case 3:
                 realRating = 3;
@@ -183,6 +185,38 @@ public class MovieRecController implements Initializable {
         } else {
             errorLabel.setText("Error : please select a movie to remove");
         }
+    }
+
+    @FXML
+    private void displayhighest(ActionEvent event) {
+        lstMovies.getItems().clear();
+        newMovies = FXCollections.observableArrayList();
+        foundMovieList = new ArrayList<>();
+        foundMovieList = movieModel.getHigestRecommended();
+        if (foundMovieList != null) {
+            newMovies.addAll(foundMovieList);
+            lstMovies.setItems(newMovies);
+        }
+    }
+
+    @FXML
+    private void displayNew(ActionEvent event) {
+        lstMovies.getItems().clear();
+        lstMovies.getItems().clear();
+        newMovies = FXCollections.observableArrayList();
+        foundMovieList = new ArrayList<>();
+        foundMovieList = movieModel.getWeighted(newUser);
+        if (foundMovieList != null) {
+            newMovies.addAll(foundMovieList);
+            lstMovies.setItems(newMovies);
+        }
+
+    }
+
+    @FXML
+    private void displayOld(ActionEvent event) throws MovieRecSysException {
+        lstMovies.getItems().clear();
+        lstMovies.setItems(movieModel.getMovies());
     }
 
 }
