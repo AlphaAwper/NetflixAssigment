@@ -5,6 +5,10 @@
  */
 package movierecsys.gui.model;
 
+<<<<<<< HEAD
+=======
+import java.io.IOException;
+>>>>>>> SQL implementation
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,7 +29,11 @@ public class MovieModel {
 
     private MRSLogicFacade logiclayer;
 
+<<<<<<< HEAD
     public MovieModel() throws MovieRecSysException {
+=======
+    public MovieModel() throws MovieRecSysException, IOException {
+>>>>>>> SQL implementation
         movies = FXCollections.observableArrayList();
         logiclayer = new MRSManager();
         movies.addAll(logiclayer.getAllMovies());

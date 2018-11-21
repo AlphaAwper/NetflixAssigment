@@ -5,6 +5,10 @@
  */
 package movierecsys.gui.model;
 
+<<<<<<< HEAD
+=======
+import java.io.IOException;
+>>>>>>> SQL implementation
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import movierecsys.be.User;
@@ -22,7 +26,11 @@ public class UserModel {
 
     private MRSLogicFacade logiclayer;
 
+<<<<<<< HEAD
     public UserModel() throws MovieRecSysException {
+=======
+    public UserModel() throws MovieRecSysException, IOException {
+>>>>>>> SQL implementation
         users = FXCollections.observableArrayList();
         logiclayer = new MRSManager();
         users.addAll(logiclayer.getAllUsers());

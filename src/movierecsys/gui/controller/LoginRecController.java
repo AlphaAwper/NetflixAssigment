@@ -41,7 +41,11 @@ public class LoginRecController implements Initializable {
     @FXML
     private Label errorLabel;
 
+<<<<<<< HEAD
     public LoginRecController() throws MovieRecSysException {
+=======
+    public LoginRecController() throws MovieRecSysException, IOException {
+>>>>>>> SQL implementation
         userModel = new UserModel();
     }
 
