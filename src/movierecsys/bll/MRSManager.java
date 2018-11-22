@@ -30,11 +30,7 @@ public class MRSManager implements MRSLogicFacade {
     private final RatingDAO ratingDAO;
     private final MovieRecommender movieRecommend;
 
-<<<<<<< HEAD
-    public MRSManager() {
-=======
     public MRSManager() throws IOException {
->>>>>>> SQL implementation
         movieDAO = new MovieDAO();
         movieSearch = new MovieSearcher();
         userData = new UserDAO();

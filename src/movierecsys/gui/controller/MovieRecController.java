@@ -78,11 +78,7 @@ public class MovieRecController implements Initializable {
     @FXML
     private Button userRecom;
 
-<<<<<<< HEAD
-    public MovieRecController() {
-=======
     public MovieRecController() throws IOException {
->>>>>>> SQL implementation
         try {
             movieModel = new MovieModel();
         } catch (MovieRecSysException ex) {

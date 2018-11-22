@@ -5,18 +5,6 @@
  */
 package movierecsys.dal;
 
-<<<<<<< HEAD
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
-=======
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.io.IOException;
@@ -25,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
->>>>>>> SQL implementation
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,9 +25,6 @@ import movierecsys.be.Movie;
  */
 public class MovieDAO {
 
-<<<<<<< HEAD
-    private static final String MOVIE_SOURCE = "data/movie_titles.txt";
-=======
     SQLServerDataSource ds;
 
     public MovieDAO() throws IOException {
@@ -55,7 +39,6 @@ public class MovieDAO {
         ds.setServerName(infoList.get(4));
 
     }
->>>>>>> SQL implementation
 
     /**
      * Gets a list of all movies in the persistence storage.
@@ -65,47 +48,6 @@ public class MovieDAO {
      */
     public List<Movie> getAllMovies() throws IOException {
         List<Movie> allMovies = new ArrayList<>();
-<<<<<<< HEAD
-        String source = "data/movie_titles.txt";
-        File file = new File(source);
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) //Using a try with resources!
-        {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    try {
-                        Movie mov = stringArrayToMovie(line);
-                        allMovies.add(mov);
-                    } catch (Exception ex) {
-                        System.out.println(ex);
-                    }
-                }
-            }
-        }
-        return allMovies;
-    }
-
-    /**
-     * Reads a movie from the comma separated line.
-     *
-     * @param line the comma separated line.
-     * @return The representing Movie object.
-     * @throws NumberFormatException
-     */
-    private Movie stringArrayToMovie(String line) {
-        String[] arrMovie = line.split(",");
-
-        int id = Integer.parseInt(arrMovie[0]);
-        int year = Integer.parseInt(arrMovie[1]);
-        String title = arrMovie[2];
-        // Add if commas in title, includes the rest of the string
-        for (int i = 3; i < arrMovie.length; i++) {
-            title += "," + arrMovie[i];
-        }
-        Movie mov = new Movie(id, year, title);
-        return mov;
-=======
 
         try (Connection con = ds.getConnection()) {
             String sqlStatement = "SELECT * FROM Movies";
@@ -127,7 +69,6 @@ public class MovieDAO {
             System.out.println(ex);
             return null;
         }
->>>>>>> SQL implementation
     }
 
     /**
@@ -139,17 +80,6 @@ public class MovieDAO {
      * storage.
      */
     public Movie createMovie(int releaseYear, String title) throws IOException {
-<<<<<<< HEAD
-        Path path = new File(MOVIE_SOURCE).toPath();
-        int id = -1;
-        try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.SYNC, StandardOpenOption.APPEND, StandardOpenOption.WRITE)) {
-            id = getNextAvailableMovieID();
-            bw.newLine();
-            bw.write(id + "," + releaseYear + "," + title);
-        }
-        Movie sendMovie = new Movie(id, releaseYear, title);
-        updateMovie(sendMovie);
-=======
         String sql = "INSERT INTO Movies(ID, Year, Title) VALUES (?, ?, ?)";
         int Id = -1;
         try (Connection con = ds.getConnection()) {
@@ -170,7 +100,6 @@ public class MovieDAO {
 
         }
         Movie sendMovie = new Movie(Id, releaseYear, title);
->>>>>>> SQL implementation
         return sendMovie;
     }
 
@@ -181,17 +110,6 @@ public class MovieDAO {
      * @throws IOException
      */
     private int getNextAvailableMovieID() throws IOException {
-<<<<<<< HEAD
-        List<Movie> allMovies = getAllMovies();
-        int newhighID = 0;
-        for (Movie allMovie : allMovies) {
-            if (allMovie.getId() != newhighID + 1) {
-                break;
-            }
-            newhighID++;
-        }
-        return newhighID + 1;
-=======
         int ID = -1;
         try (Connection con = ds.getConnection()) {
 
@@ -210,7 +128,6 @@ public class MovieDAO {
         }
 
         return ID + 1;
->>>>>>> SQL implementation
     }
 
     /**
@@ -219,29 +136,6 @@ public class MovieDAO {
      * @param movie The movie to delete.
      */
     public void deleteMovie(Movie movie) throws IOException {
-<<<<<<< HEAD
-        String currentLine;
-        File inputFile = new File(MOVIE_SOURCE);
-        File tempFile = new File("data/tempMovies.txt");
-
-        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-        String s1 = Integer.toString(movie.getId());
-
-        while ((currentLine = reader.readLine()) != null) {
-            if (!(currentLine.split(",")[0]).contains(s1)) {
-                writer.write(currentLine);
-                writer.newLine();
-            }
-        }
-
-        writer.close();
-        reader.close();
-
-        inputFile.delete();
-        tempFile.renameTo(inputFile);
-=======
 
         try (Connection con = ds.getConnection()) {
 
@@ -257,7 +151,6 @@ public class MovieDAO {
             System.out.println(ex);
 
         }
->>>>>>> SQL implementation
 
     }
 
@@ -268,21 +161,6 @@ public class MovieDAO {
      * @param movie The updated movie.
      */
     public void updateMovie(Movie movie) throws IOException {
-<<<<<<< HEAD
-        File tmp = new File("data/tmp_movies.txt");
-        List<Movie> allMovies = getAllMovies();
-        allMovies.removeIf((Movie t) -> t.getId() == movie.getId());
-        allMovies.add(movie);
-        Collections.sort(allMovies, (Movie o1, Movie o2) -> Integer.compare(o1.getId(), o2.getId()));
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(tmp))) {
-            for (Movie mov : allMovies) {
-                bw.write(mov.getId() + "," + mov.getYear() + "," + mov.getTitle());
-                bw.newLine();
-            }
-        }
-        Files.copy(tmp.toPath(), new File(MOVIE_SOURCE).toPath(), StandardCopyOption.REPLACE_EXISTING);
-        Files.delete(tmp.toPath());
-=======
         try (Connection con = ds.getConnection()) {
 
             String query = "UPDATE Movies set Year = ?, Title = ?, WHERE ID = ?";
@@ -298,7 +176,7 @@ public class MovieDAO {
             System.out.println(ex);
 
         }
->>>>>>> SQL implementation
+
     }
 
     /**

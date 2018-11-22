@@ -5,20 +5,6 @@
  */
 package movierecsys.dal;
 
-<<<<<<< HEAD
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Collections;
-=======
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.io.IOException;
@@ -28,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
->>>>>>> SQL implementation
 import java.util.List;
 import movierecsys.be.Movie;
 import movierecsys.be.Rating;
@@ -40,11 +25,6 @@ import movierecsys.be.User;
  */
 public class RatingDAO {
 
-<<<<<<< HEAD
-    private static final String RATING_SOURCE = "data/ratings.txt";
-
-    private static final int RECORD_SIZE = Integer.BYTES * 3;
-=======
     SQLServerDataSource ds;
 
     public RatingDAO() throws IOException {
@@ -57,7 +37,6 @@ public class RatingDAO {
         ds.setPortNumber(Integer.parseInt(infoList.get(3)));
         ds.setServerName(infoList.get(4));
     }
->>>>>>> SQL implementation
 
     /**
      * Persists the given rating.
@@ -77,14 +56,6 @@ public class RatingDAO {
         if (isFound) {
             updateRating(rating);
         } else {
-<<<<<<< HEAD
-            Path path = new File(RATING_SOURCE).toPath();
-            try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.SYNC, StandardOpenOption.APPEND, StandardOpenOption.WRITE)) {
-                bw.newLine();
-                bw.write(rating.getMovie() + "," + rating.getUser() + "," + rating.getRating());
-                bw.close();
-                updateRating(rating);
-=======
             String sql = "INSERT INTO Ratings(MovieID, UserID, Rating) VALUES (?, ?, ?)";
             try (Connection con = ds.getConnection()) {
 
@@ -101,7 +72,6 @@ public class RatingDAO {
             } catch (SQLException ex) {
                 System.out.println(ex);
 
->>>>>>> SQL implementation
             }
         }
     }
@@ -114,21 +84,7 @@ public class RatingDAO {
      * @throws java.io.IOException
      */
     public void updateRating(Rating rating) throws IOException {
-<<<<<<< HEAD
-        File tmp = new File("data/tmp_ratings.txt");
-        List<Rating> allRatings = getAllRatings();
-        allRatings.removeIf((Rating t) -> t.getMovie() == rating.getMovie());
-        allRatings.add(rating);
-        Collections.sort(allRatings, (Rating o1, Rating o2) -> Integer.compare(o1.getMovie(), o2.getMovie()));
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(tmp))) {
-            for (Rating rat : allRatings) {
-                bw.write(rat.getMovie() + "," + rat.getUser() + "," + rat.getRating());
-                bw.newLine();
-            }
-        }
-        Files.copy(tmp.toPath(), new File(RATING_SOURCE).toPath(), StandardCopyOption.REPLACE_EXISTING);
-        Files.delete(tmp.toPath());
-=======
+
         try (Connection con = ds.getConnection()) {
             String query = "UPDATE Ratings set Rating = ? WHERE MovieID = ? AND UserID = ?";
             PreparedStatement ps = con.prepareStatement(query);
@@ -143,7 +99,7 @@ public class RatingDAO {
             System.out.println(ex);
 
         }
->>>>>>> SQL implementation
+
     }
 
     /**
@@ -152,30 +108,6 @@ public class RatingDAO {
      * @param rating
      */
     public void deleteRating(int IdToDelete) throws IOException {
-<<<<<<< HEAD
-        String currentLine;
-        File inputFile = new File(RATING_SOURCE);
-        File tempFile = new File("data/tempRatings.txt");
-
-        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-        String s1 = Integer.toString(IdToDelete);
-
-        while ((currentLine = reader.readLine()) != null) {
-            if (!(currentLine.split(",")[0]).contains(s1)) {
-                writer.write(currentLine);
-                writer.newLine();
-            }
-        }
-
-        writer.close();
-        reader.close();
-
-        inputFile.delete();
-        tempFile.renameTo(inputFile);
-=======
-
         try (Connection con = ds.getConnection()) {
 
             String query = "DELETE from Ratings WHERE MovieID = ?";
@@ -190,7 +122,6 @@ public class RatingDAO {
             System.out.println(ex);
 
         }
->>>>>>> SQL implementation
     }
 
     /**
@@ -200,35 +131,7 @@ public class RatingDAO {
      */
     public List<Rating> getAllRatings() throws IOException {
         List<Rating> allRatings = new ArrayList<>();
-<<<<<<< HEAD
-        File file = new File(RATING_SOURCE);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) //Using a try with resources!
-        {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    try {
-                        Rating us = stringArrayToRating(line);
-                        allRatings.add(us);
-                    } catch (Exception ex) {
-                        System.out.println(ex);
-                    }
-                }
-            }
-        }
-        return allRatings;
-    }
-
-    private Rating stringArrayToRating(String line) {
-        String[] arrRating = line.split(",");
-
-        int movieId = Integer.parseInt(arrRating[0]);
-        int userId = Integer.parseInt(arrRating[1]);
-        int rating = Integer.parseInt(arrRating[2]);
-        Rating rat = new Rating(movieId, userId, rating);
-        return rat;
-=======
         try (Connection con = ds.getConnection()) {
             String sqlStatement = "SELECT * FROM Ratings";
             Statement statement = con.createStatement();
@@ -249,7 +152,6 @@ public class RatingDAO {
             System.out.println(ex);
             return null;
         }
->>>>>>> SQL implementation
     }
 
     /**
@@ -269,17 +171,6 @@ public class RatingDAO {
         return allUserRatings;
     }
 
-<<<<<<< HEAD
-    private Rating getRatingFromLine(String line) throws NumberFormatException {
-        String[] cols = line.split(",");
-        int movId = Integer.parseInt(cols[0]);
-        int userId = Integer.parseInt(cols[1]);
-        int rating = Integer.parseInt(cols[2]);
-        return new Rating(movId, userId, rating);
-    }
-
-=======
->>>>>>> SQL implementation
     public Rating getSingleRating(User newUser, Movie selectedItem) throws IOException {
         List<Rating> allRatings = getAllRatings();
         Rating userRating = null;
